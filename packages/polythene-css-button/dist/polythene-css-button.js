@@ -75,8 +75,7 @@
   var baseLayout = polytheneCoreCss.createLayout({ varFns: varFns });
 
   var classes = {
-      component: "pe-text-button",
-      super: "pe-button",
+      component: "pe-button pe-text-button",
       row: "pe-button-row",
 
       // elements      
@@ -578,15 +577,14 @@
 
   var fns = [layout, color];
   var baseFns = [baseLayout];
-  var superSelector = "." + classes.super;
-  var selector = "." + classes.component;
+  var selector = "." + classes.component.replace(/ /g, ".");
 
   var addStyle = function addStyle(customSelector, customVars) {
     var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         mediaQuery = _ref.mediaQuery;
 
     customSelector && polytheneCoreCss.styler.addStyle({
-      selectors: [customSelector, superSelector],
+      selectors: [customSelector],
       fns: baseFns,
       vars: vars,
       customVars: customVars,
@@ -609,7 +607,7 @@
         mediaQuery = _ref2.mediaQuery;
 
     return polytheneCoreCss.styler.getStyle({
-      selectors: [customSelector, superSelector],
+      selectors: [customSelector],
       fns: baseFns,
       vars: vars,
       customVars: customVars,
@@ -623,11 +621,6 @@
     }));
   };
 
-  polytheneCoreCss.styler.addStyle({
-    selectors: [superSelector],
-    fns: baseFns,
-    vars: vars
-  });
   polytheneCoreCss.styler.addStyle({
     selectors: [selector],
     fns: fns,

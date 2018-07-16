@@ -144,7 +144,7 @@ var vars$1 = {
 };
 
 var fns = [layout$1, color$1];
-var selector = "." + classes.component;
+var selector = "." + classes.component.replace(/ /g, ".");
 
 var addStyle = styler.createAddStyle(selector, fns, vars$1);
 

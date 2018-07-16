@@ -1,20 +1,20 @@
-.pe-notification.pe-snackbar {
+.pe-snackbar {
   width: 100%;
   opacity: 1
 }
 
-.pe-notification.pe-snackbar .pe-notification__content {
+.pe-snackbar .pe-notification__content {
   width: 100%;
   margin: 0 auto
 }
 
 @media (min-width:600px) {
-  .pe-notification.pe-snackbar.pe-notification--horizontal .pe-notification__title {
+  .pe-snackbar.pe-notification--horizontal .pe-notification__title {
     padding-right: 30px
   }
 }
 
-.pe-notification.pe-snackbar .pe-notification__content {
+.pe-snackbar .pe-notification__content {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   border-bottom-left-radius: 0;
@@ -22,17 +22,17 @@
 }
 
 @media (min-width:600px) {
-  .pe-notification.pe-snackbar {
+  .pe-snackbar {
     max-width: 568px;
     min-width: 288px
   }
 }
 
-.pe-dark-tone.pe-notification.pe-snackbar .pe-notification__content,.pe-dark-tone .pe-notification.pe-snackbar .pe-notification__content {
+.pe-dark-tone.pe-snackbar .pe-notification__content,.pe-dark-tone .pe-snackbar .pe-notification__content {
   background: #222
 }
 
-.pe-light-tone.pe-notification.pe-snackbar .pe-notification__content,.pe-light-tone .pe-notification.pe-snackbar .pe-notification__content,.pe-notification.pe-snackbar .pe-notification__content {
+.pe-light-tone.pe-snackbar .pe-notification__content,.pe-light-tone .pe-snackbar .pe-notification__content,.pe-snackbar .pe-notification__content {
   background: #fff
 }
 

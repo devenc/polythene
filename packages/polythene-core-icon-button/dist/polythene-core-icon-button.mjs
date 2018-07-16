@@ -24,7 +24,7 @@ var createProps = function createProps(vnode, _ref) {
   return _extends({}, {
     content: h("div", { className: classes.content }, content),
     after: attrs.label && h("div", { className: classes.label }, attrs.label),
-    parentClassName: [attrs.parentClassName || classes.component, attrs.compact ? classes.compact : null].join(" "),
+    subClassName: [classes.component, attrs.className, attrs.compact ? classes.compact : null].join(" "),
     // defaults
     wash: false,
     animateOnTap: false

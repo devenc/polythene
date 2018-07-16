@@ -72,8 +72,7 @@ var varFns = {
 var baseLayout = createLayout({ varFns: varFns });
 
 var classes = {
-    component: "pe-text-button",
-    super: "pe-button",
+    component: "pe-button pe-text-button",
     row: "pe-button-row",
 
     // elements      
@@ -575,15 +574,14 @@ var vars$1 = {
 
 var fns = [layout, color];
 var baseFns = [baseLayout];
-var superSelector = "." + classes.super;
-var selector = "." + classes.component;
+var selector = "." + classes.component.replace(/ /g, ".");
 
 var addStyle = function addStyle(customSelector, customVars) {
   var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
       mediaQuery = _ref.mediaQuery;
 
   customSelector && styler.addStyle({
-    selectors: [customSelector, superSelector],
+    selectors: [customSelector],
     fns: baseFns,
     vars: vars$1,
     customVars: customVars,
@@ -606,7 +604,7 @@ var getStyle = function getStyle() {
       mediaQuery = _ref2.mediaQuery;
 
   return styler.getStyle({
-    selectors: [customSelector, superSelector],
+    selectors: [customSelector],
     fns: baseFns,
     vars: vars$1,
     customVars: customVars,
@@ -620,11 +618,6 @@ var getStyle = function getStyle() {
   }));
 };
 
-styler.addStyle({
-  selectors: [superSelector],
-  fns: baseFns,
-  vars: vars$1
-});
 styler.addStyle({
   selectors: [selector],
   fns: fns,

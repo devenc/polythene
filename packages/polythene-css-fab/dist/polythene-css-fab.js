@@ -146,7 +146,7 @@
   };
 
   var fns = [layout, color];
-  var selector = "." + classes.component;
+  var selector = "." + classes.component.replace(/ /g, ".");
 
   var addStyle = polytheneCoreCss.styler.createAddStyle(selector, fns, vars);
 

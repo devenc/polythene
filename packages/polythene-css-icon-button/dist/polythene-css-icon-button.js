@@ -5,7 +5,8 @@
 }(this, (function (exports,polytheneCoreCss,polytheneTheme) { 'use strict';
 
   var classes = {
-    component: "pe-button pe-icon-button",
+    component: "pe-icon-button",
+    super: "pe-button",
 
     // elements
     content: "pe-icon-button__content",

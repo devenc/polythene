@@ -6,13 +6,11 @@ export const createProps = vnode => {
   const isCover = !(attrs.push || attrs.permanent || attrs.mini);
   return Object.assign(
     {},
-    attrs,
     {
       fullBleed: true,
-      className: null,
-      parentClassName: [
-        attrs.className,
+      subClassName: [
         classes.component,
+        attrs.className,
         isCover ? classes.cover : null,
         attrs.push ? classes.push : null,
         attrs.permanent ? classes.permanent : null,
@@ -30,6 +28,10 @@ export const createProps = vnode => {
       z: attrs.z !== undefined
         ? attrs.z
         : undefined
+    },
+    attrs,
+    {
+      className: null,
     }
   );
 };

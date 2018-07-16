@@ -5,7 +5,7 @@ import vars from "./vars";
 import { styler } from "polythene-core-css";
 
 const fns = [layout, color];
-const selector = `.${classes.component}`;
+const selector = `.${classes.component.replace(/ /g, ".")}`;
 
 const addStyle = styler.createAddStyle(selector, fns, vars);
 

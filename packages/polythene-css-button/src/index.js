@@ -7,12 +7,11 @@ import { styler } from "polythene-core-css";
 
 const fns = [layout, color];
 const baseFns = [baseLayout];
-const superSelector = `.${classes.super}`;
-const selector = `.${classes.component}`;
+const selector = `.${classes.component.replace(/ /g, ".")}`;
 
 const addStyle = (customSelector, customVars, { mediaQuery }={}) => {
   customSelector && styler.addStyle({
-    selectors: [customSelector, superSelector],
+    selectors: [customSelector],
     fns: baseFns,
     vars,
     customVars,
@@ -29,7 +28,7 @@ const addStyle = (customSelector, customVars, { mediaQuery }={}) => {
 
 const getStyle = (customSelector = "", customVars, { mediaQuery }={}) => 
   styler.getStyle({
-    selectors: [customSelector, superSelector],
+    selectors: [customSelector],
     fns: baseFns,
     vars,
     customVars,
@@ -42,11 +41,6 @@ const getStyle = (customSelector = "", customVars, { mediaQuery }={}) =>
     mediaQuery,
   }));
 
-styler.addStyle({
-  selectors: [superSelector],
-  fns: baseFns,
-  vars
-});
 styler.addStyle({
   selectors: [selector],
   fns,

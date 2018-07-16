@@ -99,9 +99,9 @@ export const createProps = (vnode, { renderer: h, Shadow }) => {
   return Object.assign(
     {},
     {
-      parentClassName: [
-        classes.super,
-        attrs.parentClassName || classes.component
+      subClassName: [
+        classes.component,
+        attrs.className,
       ].join(" "),
       animateOnTap: false,
       shadowComponent: h(Shadow, {
@@ -113,7 +113,10 @@ export const createProps = (vnode, { renderer: h, Shadow }) => {
         : false,
       children
     },
-    attrs
+    attrs,
+    {
+      className: null
+    }
   );
 };
 

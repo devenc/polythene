@@ -18,14 +18,15 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var createProps = function createProps(vnode) {
   var attrs = vnode.attrs;
   var isCover = !(attrs.push || attrs.permanent || attrs.mini);
-  return _extends({}, attrs, {
+  return _extends({}, {
     fullBleed: true,
-    className: null,
-    parentClassName: [attrs.className, classes.component, isCover ? classes.cover : null, attrs.push ? classes.push : null, attrs.permanent ? classes.permanent : null, attrs.border ? classes.border : null, attrs.mini ? classes.mini : null, attrs.floating ? classes.floating : null, attrs.fixed ? classes.fixed : null, attrs.anchor === "end" ? classes.anchorEnd : null].join(" "),
+    subClassName: [classes.component, attrs.className, isCover ? classes.cover : null, attrs.push ? classes.push : null, attrs.permanent ? classes.permanent : null, attrs.border ? classes.border : null, attrs.mini ? classes.mini : null, attrs.floating ? classes.floating : null, attrs.fixed ? classes.fixed : null, attrs.anchor === "end" ? classes.anchorEnd : null].join(" "),
     inactive: attrs.permanent && !attrs.mini,
     shadowDepth: attrs.shadowDepth !== undefined ? attrs.shadowDepth : 0,
     // deprecated:
     z: attrs.z !== undefined ? attrs.z : undefined
+  }, attrs, {
+    className: null
   });
 };
 

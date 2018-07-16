@@ -76,7 +76,7 @@ export const createProps = (vnode, { keys: k }) => {
     {
       className: [
         classes.super,
-        attrs.parentClassName || classes.component,
+        attrs.subClassName || classes.component,
         attrs.selected ? classes.selected : null,
         attrs.highLabel ? classes.highLabel : null,
         attrs.extraWide ? classes.extraWide : null,

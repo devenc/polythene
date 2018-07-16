@@ -5,8 +5,7 @@
 }(this, (function (exports,polytheneCore) { 'use strict';
 
   var classes = {
-    component: "pe-raised-button",
-    super: "pe-button pe-text-button"
+    component: "pe-text-button pe-raised-button"
   };
 
   var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -110,7 +109,7 @@
     var state = vnode.state;
     var children = attrs.children || vnode.children || [];
     return _extends({}, {
-      parentClassName: [classes.super, attrs.parentClassName || classes.component].join(" "),
+      subClassName: [classes.component, attrs.className].join(" "),
       animateOnTap: false,
       shadowComponent: h(Shadow, {
         shadowDepth: attrs.disabled ? 0 : state.shadowDepth,
@@ -118,7 +117,9 @@
       }),
       wash: attrs.wash !== undefined ? attrs.wash : false,
       children: children
-    }, attrs);
+    }, attrs, {
+      className: null
+    });
   };
 
   var createContent = function createContent(vnode) {

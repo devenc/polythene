@@ -26,9 +26,9 @@
 
     var attrs = vnode.attrs;
     var content = attrs.content ? attrs.content : attrs.icon ? h(Icon, attrs.icon) : attrs.children || vnode.children;
-    return _extends({}, attrs, {
+    return _extends({}, {
       content: h("div", { className: classes.content }, content),
-      parentClassName: [classes.component, attrs.mini ? classes.mini : null, attrs.className || attrs[k.class]].join(" "),
+      subClassName: [classes.component, attrs.mini ? classes.mini : null, attrs.className || attrs[k.class]].join(" "),
       // defaults
       ripple: {
         center: true,
@@ -38,6 +38,8 @@
       ink: true,
       wash: true,
       animateOnTap: attrs.animateOnTap !== undefined ? attrs.animateOnTap : true
+    }, attrs, {
+      className: null
     });
   };
 

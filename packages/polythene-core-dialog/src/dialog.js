@@ -111,7 +111,7 @@ export const createProps = (vnode, { keys: k }) => {
     filterSupportedAttributes(attrs, { remove: ["style"] }), // style set in content, and set by show/hide transition
     {
       className: [
-        attrs.parentClassName || classes.component,
+        attrs.subClassName || classes.component,
         attrs.fromMultipleClassName,
         attrs.fullScreen ? classes.fullScreen : null,
         attrs.modal ? classes.modal : null,

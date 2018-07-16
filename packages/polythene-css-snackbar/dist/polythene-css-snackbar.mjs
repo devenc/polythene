@@ -23,7 +23,8 @@ var notificationClasses = {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var classes = _extends({}, notificationClasses, {
-  component: "pe-notification pe-snackbar",
+  component: "pe-snackbar",
+  super: "pe-notification",
 
   // elements
   holder: "pe-snackbar__holder",
@@ -133,10 +134,10 @@ var vars$1 = {
 };
 
 var fns = [layout, color$1];
-var selector = "." + classes.component.replace(/ /g, ".");
+var selector = "." + [classes.super, classes.component].join(".");
 
 var holderFns = [holderLayout];
-var holderSelector = "." + classes.holder.replace(/ /g, ".");
+var holderSelector = "." + classes.holder;
 
 var addStyle = function addStyle(customSelector, customVars) {
   var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
