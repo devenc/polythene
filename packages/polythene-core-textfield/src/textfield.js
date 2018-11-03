@@ -1,5 +1,21 @@
-import { filterSupportedAttributes } from "polythene-core";
+import { filterSupportedAttributes, deprecationForElementAttrs } from "polythene-core";
 import classes from "polythene-css-classes/textfield";
+
+const deprecated = [
+  "autofocus",
+  "max",
+  "maxlength",
+  "min",
+  "minlength",
+  "name",
+  "pattern",
+  "readonly",
+  "required",
+  "rows",
+  "tabindex",
+  "type",
+  "value",
+];
 
 export const getElement = vnode =>
   vnode.attrs.element || "div";
@@ -102,11 +118,13 @@ const ignoreEvent = (attrs, name) =>
 
 export const getInitialState = (vnode, createStream, { keys: k }) => {
   const attrs = vnode.attrs;
+  const elementAttrs = attrs.elementAttrs || {};
+  const value = elementAttrs.value || attrs.value;
 
   const defaultValue = attrs.defaultValue !== undefined && attrs.defaultValue !== null
     ? attrs.defaultValue.toString()
-    : attrs.value !== undefined && attrs.value !== null
-      ? attrs.value.toString()
+    : value !== undefined && value !== null
+      ? value.toString()
       : "";
 
   const el = createStream(null);
@@ -119,7 +137,16 @@ export const getInitialState = (vnode, createStream, { keys: k }) => {
   const isInvalid = createStream(false);
   const previousValue = createStream(undefined);
   const didSetFocusTime = 0;
-  const showErrorPlaceholder = !!(attrs.valid !== undefined || attrs.validate || attrs.min || attrs.max || attrs[k.minlength] || attrs[k.maxlength] || attrs.required || attrs.pattern);
+  const showErrorPlaceholder = !!(
+    attrs.valid !== undefined
+    || attrs.validate
+    || elementAttrs.min || attrs.min
+    || elementAttrs.max || attrs.max 
+    || elementAttrs[k.minlength] || attrs[k.minlength]
+    || elementAttrs[k.maxlength] || attrs[k.maxlength]
+    || elementAttrs.required || attrs.required 
+    || elementAttrs.pattern || attrs.pattern
+  );
 
   return {
     defaultValue,
@@ -138,13 +165,19 @@ export const getInitialState = (vnode, createStream, { keys: k }) => {
   };
 };
 
-export const onMount = vnode => {
+export const onMount = (vnode, { keys }) => {
   if (!vnode.dom) {
     return;
   }
   const dom = vnode.dom;
   const state = vnode.state;
   const attrs = vnode.attrs;
+
+  deprecationForElementAttrs("TextField", { 
+    attrs,
+    deprecated,
+    keys,
+  });
 
   state.el(dom);
   const inputType = attrs.multiLine ? "textarea" : "input";
@@ -171,11 +204,13 @@ export const onMount = vnode => {
 export const onUpdate = vnode => {
   const state = vnode.state;
   const attrs = vnode.attrs;
+  const elementAttrs = attrs.elementAttrs || {};
   checkValidity(vnode);
 
   const inputEl = state.inputEl();
-  const value = (attrs.value !== undefined && attrs.value !== null)
-    ? attrs.value
+  const valueAttr = elementAttrs.value || attrs.value;
+  const value = (valueAttr !== undefined && valueAttr !== null)
+    ? valueAttr
     : inputEl
       ? inputEl.value
       : state.previousValue();
@@ -193,6 +228,10 @@ export const onUpdate = vnode => {
 export const createProps = (vnode, { keys: k }) => {
   const state = vnode.state;
   const attrs = vnode.attrs;
+  const elementAttrs = attrs.elementAttrs || {};
+  const disabled = elementAttrs.disabled || attrs.disabled;
+  const readOnly = elementAttrs[k.readonly] || attrs[k.readonly];
+  const required = elementAttrs.required || attrs.required;
   const isInvalid = state.isInvalid();
 
   return Object.assign(
@@ -201,21 +240,21 @@ export const createProps = (vnode, { keys: k }) => {
     {
       className: [
         classes.component,
-        isInvalid                   ? classes.stateInvalid : "",
-        state.hasFocus()            ? classes.stateFocused : "",
-        state.isDirty()             ? classes.stateDirty : "",
-        attrs.floatingLabel         ? classes.hasFloatingLabel : "",
-        attrs.disabled              ? classes.stateDisabled : "",
-        attrs.readonly              ? classes.stateReadonly : "",
-        attrs.dense                 ? classes.isDense : "",
-        attrs.required              ? classes.isRequired : "",
-        attrs.fullWidth             ? classes.hasFullWidth : "",
-        attrs.counter               ? classes.hasCounter : "",
+        attrs.counter                                                  ? classes.hasCounter : "",
+        attrs.dense                                                    ? classes.isDense : "",
+        attrs.floatingLabel                                            ? classes.hasFloatingLabel : "",
+        attrs.fullWidth                                                ? classes.hasFullWidth : "",
+        attrs.hideClear !== false   && attrs.hideClear !== undefined   ? classes.hideClear : "",
         attrs.hideSpinner !== false && attrs.hideSpinner !== undefined ? classes.hideSpinner : "",
-        attrs.hideClear !== false   && attrs.hideClear !== undefined ? classes.hideClear : "",
-        attrs.hideValidation        ? classes.hideValidation : "",
-        attrs.tone === "dark"       ? "pe-dark-tone" : null,
-        attrs.tone === "light"      ? "pe-light-tone" : null,
+        attrs.hideValidation                                           ? classes.hideValidation : "",
+        disabled                                                       ? classes.stateDisabled : "",
+        isInvalid                                                      ? classes.stateInvalid : "",
+        readOnly                                                       ? classes.stateReadonly : "",
+        required                                                       ? classes.isRequired : "",
+        state.hasFocus()                                               ? classes.stateFocused : "",
+        state.isDirty()                                                ? classes.stateDirty : "",
+        attrs.tone === "dark"                                          ? "pe-dark-tone" : null,
+        attrs.tone === "light"                                         ? "pe-light-tone" : null,
         attrs.className || attrs[k.class],
       ].join(" ")
     }
@@ -225,6 +264,12 @@ export const createProps = (vnode, { keys: k }) => {
 export const createContent = (vnode, { renderer: h, keys: k }) => {
   const state = vnode.state;
   const attrs = vnode.attrs;
+  const elementAttrs = attrs.elementAttrs || {};
+  const typeAttr = elementAttrs.type || attrs.type;
+  const disabled = elementAttrs.disabled || attrs.disabled;
+  const readOnly = elementAttrs[k.readonly] || attrs[k.readonly];
+  const required = elementAttrs.required || attrs.required;
+  const name = elementAttrs.name || attrs.name;
 
   const inputEl = state.inputEl();
   let error = attrs.error || state.error();
@@ -232,15 +277,13 @@ export const createContent = (vnode, { renderer: h, keys: k }) => {
   const inputType = attrs.multiLine ? "textarea" : "input";
   const type = attrs.multiLine
     ? null
-    : !attrs.type || attrs.type === "submit" || attrs.type === "search"
+    : !typeAttr || typeAttr === "submit" || typeAttr === "search"
       ? "text"
-      : attrs.type;
+      : typeAttr;
   const showError = isInvalid && error !== undefined;
-  
-  
-  const inactive = attrs.disabled || attrs[k.readonly];
+  const inactive = disabled || readOnly;
 
-  const requiredIndicator = attrs.required && attrs.requiredIndicator !== ""
+  const requiredIndicator = required && attrs.requiredIndicator !== ""
     ? h("span",
       {
         key: "required",
@@ -249,7 +292,7 @@ export const createContent = (vnode, { renderer: h, keys: k }) => {
       attrs.requiredIndicator || "*"
     )
     : null;
-  const optionalIndicator = !attrs.required && attrs.optionalIndicator
+  const optionalIndicator = !required && attrs.optionalIndicator
     ? h("span",
       {
         key: "optional",
@@ -282,11 +325,11 @@ export const createContent = (vnode, { renderer: h, keys: k }) => {
           {
             key: "input",
             className: classes.input,
-            disabled: attrs.disabled
+            disabled
           },
           type ? { type } : null,
-          attrs.name 
-            ? { name: attrs.name }
+          name 
+            ? { name }
             : null,
 
           !ignoreEvent(attrs, k.onclick)
@@ -356,6 +399,7 @@ export const createContent = (vnode, { renderer: h, keys: k }) => {
             : null,
 
           attrs.events ? attrs.events : null, // NOTE: may overwrite oninput
+          // deprecated:
           attrs.required !== undefined && !!attrs.required ?       { required: true } : null,
           attrs[k.readonly] !== undefined && !!attrs[k.readonly] ? { [k.readonly]: true } : null,
           attrs.pattern !== undefined ?                            { pattern: attrs.pattern } : null,
@@ -365,7 +409,9 @@ export const createContent = (vnode, { renderer: h, keys: k }) => {
           attrs.min !== undefined ?                                { min: attrs.min } : null,
           attrs[k.autofocus] !== undefined ?                       { [k.autofocus]: attrs[k.autofocus] } : null,
           attrs[k.tabindex] !== undefined ?                        { [k.tabindex]: attrs[k.tabindex] } : null,
-          attrs.rows !== undefined ?                               { rows: attrs.rows } : null
+          attrs.rows !== undefined ?                               { rows: attrs.rows } : null,
+          // use instead:
+          attrs.elementAttrs
         ))
       ]
     ),

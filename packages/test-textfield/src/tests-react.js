@@ -42,6 +42,18 @@ const reactTests = ({ TextField, Button, renderer: h }) => { // eslint-disable-l
         ])
     },
     {
+      name: "Option: elementAttrs (maxLength) (JSX)",
+      component: () =>
+        block(
+          <TextField
+            defaultValue="123"
+            elementAttrs={{
+              maxLength: 3
+            }}
+          />
+        )
+    },
+    {
       name: "Option: counter, floatingLabel (JSX)",
       interactive: true,
       component: () =>

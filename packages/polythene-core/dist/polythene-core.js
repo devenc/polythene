@@ -670,12 +670,26 @@
     });
   };
 
+  var warn = function warn(old, replacement) {
+    return console.warn(old + " is deprecated and will be removed in a later version of Polythene. Use '" + replacement + "' instead.");
+  }; // eslint-disable-line no-console
+
   var deprecation = function deprecation(component, _ref) {
     var option = _ref.option,
         newOption = _ref.newOption,
         newComponent = _ref.newComponent;
-    return option && console.warn(component + ": option '" + option + "' is deprecated and will be removed in later versions. Use '" + newOption + "' instead."), newComponent && !newOption && console.warn(component + ": this component is deprecated and will be removed in later versions. Use '" + newComponent + "' instead."), newComponent && newOption && console.warn(component + ": this component is deprecated and will be removed in later versions. Use '" + newComponent + "' with option '" + newOption + "' instead.") // eslint-disable-line no-console
-    ;
+    return option && warn(component + ": option '" + option + "'", newOption), newComponent && !newOption && warn(component + ": this component", newComponent), newComponent && newOption && warn(component + ": this component", "'" + newComponent + "' with option '" + newOption + "'");
+  };
+
+  var deprecationForElementAttrs = function deprecationForElementAttrs(component, _ref2) {
+    var attrs = _ref2.attrs,
+        deprecated = _ref2.deprecated,
+        keys = _ref2.keys;
+
+    deprecated.forEach(function (attr) {
+      var attribute = keys[attr] || attr;
+      attrs[attribute] !== undefined && deprecation(component, { option: attribute, newOption: "elementAttrs: { " + [attribute] + ": ... }" });
+    });
   };
 
   var iconDropdownUp = "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"dd-up-svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 14l5-5 5 5z\"/></svg>";
@@ -707,6 +721,7 @@
   exports.isRTL = isRTL;
   exports.styleDurationToMs = styleDurationToMs;
   exports.deprecation = deprecation;
+  exports.deprecationForElementAttrs = deprecationForElementAttrs;
   exports.iconDropdownUp = iconDropdownUp;
   exports.iconDropdownDown = iconDropdownDown;
 

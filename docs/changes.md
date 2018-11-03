@@ -1,26 +1,59 @@
 # Change log
 
-<!-- MarkdownTOC autolink="true" autoanchor="true" bracket="round" levels="1,2,3" -->
+<!-- TOC -->
 
+- [1.4.0](#140)
+  - [Components](#components)
 - [1.3.2](#132)
   - [Material Design version 2 -- first small changes](#material-design-version-2----first-small-changes)
   - [CSS](#css)
-  - [Components](#components)
+    - [Themes and behavior](#themes-and-behavior)
+    - [Themes and media queries](#themes-and-media-queries)
+  - [Components](#components-1)
   - [Deprecations](#deprecations)
   - [Other](#other)
 - [1.2.0](#120)
-  - [Components](#components-1)
+  - [Components](#components-2)
   - [Other](#other-1)
 - [1.1.0](#110)
   - [Core](#core)
-  - [Components](#components-2)
+  - [Components](#components-3)
   - [Example code](#example-code)
   - [Tooling](#tooling)
   - [Other](#other-2)
 - [1.0.0](#100)
 - [Pre-releases](#pre-releases)
 
-<!-- /MarkdownTOC -->
+<!-- /TOC -->
+
+
+## 1.4.0
+
+### Components
+
+HTML element attributes can now be set with option `elementAttrs`. This makes it easier to differentiate between component options and HTML options.
+
+For example for TextField:
+
+```javascript
+m(TextField, {
+  elementAttrs: {
+    autofocus: true,
+    maxlength: 3,
+  }
+})
+```
+
+or with JSX:
+
+```jsx
+<TextField elementAttrs={{
+  autoFocus: true,
+  maxLength: 3,
+}} />
+```
+
+The 'old' way to set these attributes is deprecated, but will be supported for a while.
 
 
 <a id="132"></a>

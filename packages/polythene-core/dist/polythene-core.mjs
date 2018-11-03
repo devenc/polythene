@@ -664,15 +664,29 @@ var transitionComponent = function transitionComponent(_ref) {
   });
 };
 
+var warn = function warn(old, replacement) {
+  return console.warn(old + " is deprecated and will be removed in a later version of Polythene. Use '" + replacement + "' instead.");
+}; // eslint-disable-line no-console
+
 var deprecation = function deprecation(component, _ref) {
   var option = _ref.option,
       newOption = _ref.newOption,
       newComponent = _ref.newComponent;
-  return option && console.warn(component + ": option '" + option + "' is deprecated and will be removed in later versions. Use '" + newOption + "' instead."), newComponent && !newOption && console.warn(component + ": this component is deprecated and will be removed in later versions. Use '" + newComponent + "' instead."), newComponent && newOption && console.warn(component + ": this component is deprecated and will be removed in later versions. Use '" + newComponent + "' with option '" + newOption + "' instead.") // eslint-disable-line no-console
-  ;
+  return option && warn(component + ": option '" + option + "'", newOption), newComponent && !newOption && warn(component + ": this component", newComponent), newComponent && newOption && warn(component + ": this component", "'" + newComponent + "' with option '" + newOption + "'");
+};
+
+var deprecationForElementAttrs = function deprecationForElementAttrs(component, _ref2) {
+  var attrs = _ref2.attrs,
+      deprecated = _ref2.deprecated,
+      keys = _ref2.keys;
+
+  deprecated.forEach(function (attr) {
+    var attribute = keys[attr] || attr;
+    attrs[attribute] !== undefined && deprecation(component, { option: attribute, newOption: "elementAttrs: { " + [attribute] + ": ... }" });
+  });
 };
 
 var iconDropdownUp = "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"dd-up-svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 14l5-5 5 5z\"/></svg>";
 var iconDropdownDown = "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"dd-down-svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 10l5 5 5-5z\"/></svg>";
 
-export { getAnimationEndEvent, Conditional, filterSupportedAttributes, unpackAttrs, classForSize, isClient, isServer, isTouch, pointerStartEvent, pointerEndEvent, pointerStartMoveEvent, pointerMoveEvent, pointerEndMoveEvent, Multi, show, hide, transitionComponent, throttle, subscribe, unsubscribe, emit, getStyle, stylePropCompare, isRTL, styleDurationToMs, deprecation, iconDropdownUp, iconDropdownDown };
+export { getAnimationEndEvent, Conditional, filterSupportedAttributes, unpackAttrs, classForSize, isClient, isServer, isTouch, pointerStartEvent, pointerEndEvent, pointerStartMoveEvent, pointerMoveEvent, pointerEndMoveEvent, Multi, show, hide, transitionComponent, throttle, subscribe, unsubscribe, emit, getStyle, stylePropCompare, isRTL, styleDurationToMs, deprecation, deprecationForElementAttrs, iconDropdownUp, iconDropdownDown };

@@ -39,6 +39,8 @@
 
   function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+  var deprecated = ["autofocus", "max", "maxlength", "min", "minlength", "name", "pattern", "readonly", "required", "rows", "tabindex", "type", "value"];
+
   var getElement = function getElement(vnode) {
     return vnode.attrs.element || "div";
   };
@@ -144,8 +146,10 @@
     var k = _ref.keys;
 
     var attrs = vnode.attrs;
+    var elementAttrs = attrs.elementAttrs || {};
+    var value = elementAttrs.value || attrs.value;
 
-    var defaultValue = attrs.defaultValue !== undefined && attrs.defaultValue !== null ? attrs.defaultValue.toString() : attrs.value !== undefined && attrs.value !== null ? attrs.value.toString() : "";
+    var defaultValue = attrs.defaultValue !== undefined && attrs.defaultValue !== null ? attrs.defaultValue.toString() : value !== undefined && value !== null ? value.toString() : "";
 
     var el = createStream(null);
     var inputEl = createStream(null);
@@ -157,7 +161,7 @@
     var isInvalid = createStream(false);
     var previousValue = createStream(undefined);
     var didSetFocusTime = 0;
-    var showErrorPlaceholder = !!(attrs.valid !== undefined || attrs.validate || attrs.min || attrs.max || attrs[k.minlength] || attrs[k.maxlength] || attrs.required || attrs.pattern);
+    var showErrorPlaceholder = !!(attrs.valid !== undefined || attrs.validate || elementAttrs.min || attrs.min || elementAttrs.max || attrs.max || elementAttrs[k.minlength] || attrs[k.minlength] || elementAttrs[k.maxlength] || attrs[k.maxlength] || elementAttrs.required || attrs.required || elementAttrs.pattern || attrs.pattern);
 
     return {
       defaultValue: defaultValue,
@@ -176,7 +180,9 @@
     };
   };
 
-  var onMount = function onMount(vnode) {
+  var onMount = function onMount(vnode, _ref2) {
+    var keys = _ref2.keys;
+
     if (!vnode.dom) {
       return;
     }
@@ -184,17 +190,23 @@
     var state = vnode.state;
     var attrs = vnode.attrs;
 
+    polytheneCore.deprecationForElementAttrs("TextField", {
+      attrs: attrs,
+      deprecated: deprecated,
+      keys: keys
+    });
+
     state.el(dom);
     var inputType = attrs.multiLine ? "textarea" : "input";
     var inputEl = dom.querySelector(inputType);
     vnode.state.inputEl(inputEl);
     state.inputEl().value = state.defaultValue;
 
-    state.setInputState.map(function (_ref2) {
-      var vnode = _ref2.vnode,
-          type = _ref2.type,
-          focus = _ref2.focus,
-          value = _ref2.value;
+    state.setInputState.map(function (_ref3) {
+      var vnode = _ref3.vnode,
+          type = _ref3.type,
+          focus = _ref3.focus,
+          value = _ref3.value;
 
       if (vnode) {
         value !== undefined ? state.inputEl().value = value : null;
@@ -214,10 +226,12 @@
   var onUpdate = function onUpdate(vnode) {
     var state = vnode.state;
     var attrs = vnode.attrs;
+    var elementAttrs = attrs.elementAttrs || {};
     checkValidity(vnode);
 
     var inputEl = state.inputEl();
-    var value = attrs.value !== undefined && attrs.value !== null ? attrs.value : inputEl ? inputEl.value : state.previousValue();
+    var valueAttr = elementAttrs.value || attrs.value;
+    var value = valueAttr !== undefined && valueAttr !== null ? valueAttr : inputEl ? inputEl.value : state.previousValue();
     var valueStr = value === undefined || value === null ? "" : value.toString();
 
     if (inputEl && state.previousValue() !== valueStr) {
@@ -227,39 +241,48 @@
     }
   };
 
-  var createProps = function createProps(vnode, _ref3) {
-    var k = _ref3.keys;
+  var createProps = function createProps(vnode, _ref4) {
+    var k = _ref4.keys;
 
     var state = vnode.state;
     var attrs = vnode.attrs;
+    var elementAttrs = attrs.elementAttrs || {};
+    var disabled = elementAttrs.disabled || attrs.disabled;
+    var readOnly = elementAttrs[k.readonly] || attrs[k.readonly];
+    var required = elementAttrs.required || attrs.required;
     var isInvalid = state.isInvalid();
 
     return _extends({}, polytheneCore.filterSupportedAttributes(attrs), {
-      className: [classes.component, isInvalid ? classes.stateInvalid : "", state.hasFocus() ? classes.stateFocused : "", state.isDirty() ? classes.stateDirty : "", attrs.floatingLabel ? classes.hasFloatingLabel : "", attrs.disabled ? classes.stateDisabled : "", attrs.readonly ? classes.stateReadonly : "", attrs.dense ? classes.isDense : "", attrs.required ? classes.isRequired : "", attrs.fullWidth ? classes.hasFullWidth : "", attrs.counter ? classes.hasCounter : "", attrs.hideSpinner !== false && attrs.hideSpinner !== undefined ? classes.hideSpinner : "", attrs.hideClear !== false && attrs.hideClear !== undefined ? classes.hideClear : "", attrs.hideValidation ? classes.hideValidation : "", attrs.tone === "dark" ? "pe-dark-tone" : null, attrs.tone === "light" ? "pe-light-tone" : null, attrs.className || attrs[k.class]].join(" ")
+      className: [classes.component, attrs.counter ? classes.hasCounter : "", attrs.dense ? classes.isDense : "", attrs.floatingLabel ? classes.hasFloatingLabel : "", attrs.fullWidth ? classes.hasFullWidth : "", attrs.hideClear !== false && attrs.hideClear !== undefined ? classes.hideClear : "", attrs.hideSpinner !== false && attrs.hideSpinner !== undefined ? classes.hideSpinner : "", attrs.hideValidation ? classes.hideValidation : "", disabled ? classes.stateDisabled : "", isInvalid ? classes.stateInvalid : "", readOnly ? classes.stateReadonly : "", required ? classes.isRequired : "", state.hasFocus() ? classes.stateFocused : "", state.isDirty() ? classes.stateDirty : "", attrs.tone === "dark" ? "pe-dark-tone" : null, attrs.tone === "light" ? "pe-light-tone" : null, attrs.className || attrs[k.class]].join(" ")
     });
   };
 
-  var createContent = function createContent(vnode, _ref4) {
-    var h = _ref4.renderer,
-        k = _ref4.keys;
+  var createContent = function createContent(vnode, _ref5) {
+    var h = _ref5.renderer,
+        k = _ref5.keys;
 
     var state = vnode.state;
     var attrs = vnode.attrs;
+    var elementAttrs = attrs.elementAttrs || {};
+    var typeAttr = elementAttrs.type || attrs.type;
+    var disabled = elementAttrs.disabled || attrs.disabled;
+    var readOnly = elementAttrs[k.readonly] || attrs[k.readonly];
+    var required = elementAttrs.required || attrs.required;
+    var name = elementAttrs.name || attrs.name;
 
     var inputEl = state.inputEl();
     var error = attrs.error || state.error();
     var isInvalid = state.isInvalid();
     var inputType = attrs.multiLine ? "textarea" : "input";
-    var type = attrs.multiLine ? null : !attrs.type || attrs.type === "submit" || attrs.type === "search" ? "text" : attrs.type;
+    var type = attrs.multiLine ? null : !typeAttr || typeAttr === "submit" || typeAttr === "search" ? "text" : typeAttr;
     var showError = isInvalid && error !== undefined;
+    var inactive = disabled || readOnly;
 
-    var inactive = attrs.disabled || attrs[k.readonly];
-
-    var requiredIndicator = attrs.required && attrs.requiredIndicator !== "" ? h("span", {
+    var requiredIndicator = required && attrs.requiredIndicator !== "" ? h("span", {
       key: "required",
       className: classes.requiredIndicator
     }, attrs.requiredIndicator || "*") : null;
-    var optionalIndicator = !attrs.required && attrs.optionalIndicator ? h("span", {
+    var optionalIndicator = !required && attrs.optionalIndicator ? h("span", {
       key: "optional",
       className: classes.optionalIndicator
     }, attrs.optionalIndicator) : null;
@@ -274,8 +297,8 @@
     }, label) : null, h(inputType, _extends({}, {
       key: "input",
       className: classes.input,
-      disabled: attrs.disabled
-    }, type ? { type: type } : null, attrs.name ? { name: attrs.name } : null, !ignoreEvent(attrs, k.onclick) ? _defineProperty({}, k.onclick, function () {
+      disabled: disabled
+    }, type ? { type: type } : null, name ? { name: name } : null, !ignoreEvent(attrs, k.onclick) ? _defineProperty({}, k.onclick, function () {
       if (inactive) {
         return;
       }
@@ -312,7 +335,10 @@
         state.setInputState({ vnode: vnode, focus: false });
       }
     }) : null, attrs.events ? attrs.events : null, // NOTE: may overwrite oninput
-    attrs.required !== undefined && !!attrs.required ? { required: true } : null, attrs[k.readonly] !== undefined && !!attrs[k.readonly] ? _defineProperty({}, k.readonly, true) : null, attrs.pattern !== undefined ? { pattern: attrs.pattern } : null, attrs[k.maxlength] !== undefined ? _defineProperty({}, k.maxlength, attrs[k.maxlength]) : null, attrs[k.minlength] !== undefined ? _defineProperty({}, k.minlength, attrs[k.minlength]) : null, attrs.max !== undefined ? { max: attrs.max } : null, attrs.min !== undefined ? { min: attrs.min } : null, attrs[k.autofocus] !== undefined ? _defineProperty({}, k.autofocus, attrs[k.autofocus]) : null, attrs[k.tabindex] !== undefined ? _defineProperty({}, k.tabindex, attrs[k.tabindex]) : null, attrs.rows !== undefined ? { rows: attrs.rows } : null))]), attrs.counter ? h("div", {
+    // deprecated:
+    attrs.required !== undefined && !!attrs.required ? { required: true } : null, attrs[k.readonly] !== undefined && !!attrs[k.readonly] ? _defineProperty({}, k.readonly, true) : null, attrs.pattern !== undefined ? { pattern: attrs.pattern } : null, attrs[k.maxlength] !== undefined ? _defineProperty({}, k.maxlength, attrs[k.maxlength]) : null, attrs[k.minlength] !== undefined ? _defineProperty({}, k.minlength, attrs[k.minlength]) : null, attrs.max !== undefined ? { max: attrs.max } : null, attrs.min !== undefined ? { min: attrs.min } : null, attrs[k.autofocus] !== undefined ? _defineProperty({}, k.autofocus, attrs[k.autofocus]) : null, attrs[k.tabindex] !== undefined ? _defineProperty({}, k.tabindex, attrs[k.tabindex]) : null, attrs.rows !== undefined ? { rows: attrs.rows } : null,
+    // use instead:
+    attrs.elementAttrs))]), attrs.counter ? h("div", {
       key: "counter",
       className: classes.counter
     }, (inputEl && inputEl.value.length || 0) + " / " + attrs.counter) : null, attrs.help && !showError ? h("div", {

@@ -53,7 +53,9 @@ export default ({ TextField, Button, renderer: h, keys: k }) => {
       component: {
         view: () => block([
           h(TextField, {
-            [k.autofocus]: true
+            elementAttrs: {
+              [k.autofocus]: true
+            }
           })
         ])
       }
