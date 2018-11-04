@@ -90,9 +90,11 @@ class FormUI {
       },
       m("h3", "Sign up"),
       m(TextField, {
-        name: "username",
         floatingLabel: true,
-        value: username.getData(),
+        elementAttrs: {
+          name: "username",
+          value: username.getData(),
+        },
         events: {
           oninput: e => (
             username.setData(e.target.value),
@@ -106,36 +108,40 @@ class FormUI {
         help: `Use '${TEST_USER_NAME}' to test username check`,
       }),
       m(TextField, {
-        name: "password",
         floatingLabel: true,
-        value: password.getData(),
+        elementAttrs: {
+          value: password.getData(),
+          name: "password",
+          required: true,
+          type: "password",
+        },
         events: {
           oninput: e => (
             password.setData(e.target.value),
             this.submitFailed && e.target.value.length && password.isValid()
           )
         },
-        required: true,
         valid: !errors.password,
         error: errors.password,
         label: "Your password",
-        type: "password",
       }),
       m(TextField, {
-        name: "confirmPassword",
         floatingLabel: true,
-        value: confirmPassword.getData(),
+        elementAttrs: {
+          name: "confirmPassword",
+          value: confirmPassword.getData(),
+          required: true,
+          type: "password",
+        },
         events: {
           oninput: e => (
             confirmPassword.setData(e.target.value),
             this.submitFailed && e.target.value.length && confirmPassword.isValid()
           )
         },
-        required: true,
         valid: !errors.confirmPassword,
         error: errors.confirmPassword,
         label: "Confirm your password",
-        type: "password",
       }),
       m(Button, {
         raised: true,
