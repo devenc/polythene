@@ -69,6 +69,8 @@ These options have effect on the overall component (label, input, help, error).
 
 These options also have effect on the generated HTML input field.
 
+Additional options that are not listed here are supported, provided they are valid HTML attributes.
+
 | **Parameter** |  **Required** | **Type** | **Default** | **Description** |
 | ------------- | -------------- | -------- | ----------- | --------------- |
 | **autofocus** (React: **autoFocus**) | optional | Boolean | | Set to `true` to give the input field autofocus; NOTE: does not work on iOS, set focus explicitly when an event is fired |

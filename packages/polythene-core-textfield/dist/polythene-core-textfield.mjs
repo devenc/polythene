@@ -35,6 +35,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 var getElement = function getElement(vnode) {
   return vnode.attrs.element || "div";
 };
@@ -231,7 +233,7 @@ var createProps = function createProps(vnode, _ref3) {
   var isInvalid = state.isInvalid();
 
   return _extends({}, filterSupportedAttributes(attrs), {
-    className: [classes.component, isInvalid ? classes.stateInvalid : "", state.hasFocus() ? classes.stateFocused : "", state.isDirty() ? classes.stateDirty : "", attrs.floatingLabel ? classes.hasFloatingLabel : "", attrs.disabled ? classes.stateDisabled : "", attrs.readonly ? classes.stateReadonly : "", attrs.dense ? classes.isDense : "", attrs.required ? classes.isRequired : "", attrs.fullWidth ? classes.hasFullWidth : "", attrs.counter ? classes.hasCounter : "", attrs.hideSpinner !== false && attrs.hideSpinner !== undefined ? classes.hideSpinner : "", attrs.hideClear !== false && attrs.hideClear !== undefined ? classes.hideClear : "", attrs.hideValidation ? classes.hideValidation : "", attrs.tone === "dark" ? "pe-dark-tone" : null, attrs.tone === "light" ? "pe-light-tone" : null, attrs.className || attrs[k.class]].join(" ")
+    className: [classes.component, isInvalid ? classes.stateInvalid : "", state.hasFocus() ? classes.stateFocused : "", state.isDirty() ? classes.stateDirty : "", attrs.floatingLabel ? classes.hasFloatingLabel : "", attrs.disabled ? classes.stateDisabled : "", attrs[k.readonly] ? classes.stateReadonly : "", attrs.dense ? classes.isDense : "", attrs.required ? classes.isRequired : "", attrs.fullWidth ? classes.hasFullWidth : "", attrs.counter ? classes.hasCounter : "", attrs.hideSpinner !== false && attrs.hideSpinner !== undefined ? classes.hideSpinner : "", attrs.hideClear !== false && attrs.hideClear !== undefined ? classes.hideClear : "", attrs.hideValidation ? classes.hideValidation : "", attrs.tone === "dark" ? "pe-dark-tone" : null, attrs.tone === "light" ? "pe-light-tone" : null, attrs.className || attrs[k.class]].join(" ")
   });
 };
 
@@ -242,24 +244,57 @@ var createContent = function createContent(vnode, _ref4) {
   var state = vnode.state;
   var attrs = vnode.attrs;
 
+  var autofocus = attrs[k.autofocus],
+      readonly = attrs[k.readonly],
+      counter = attrs.counter,
+      disabled = attrs.disabled,
+      errorAttr = attrs.error,
+      events = attrs.events,
+      help = attrs.help,
+      labelAttr = attrs.label,
+      maxlength = attrs.maxlength,
+      minlength = attrs.minlength,
+      multiLine = attrs.multiLine,
+      name = attrs.name,
+      optionalIndicatorAttr = attrs.optionalIndicator,
+      required = attrs.required,
+      requiredIndicatorAttr = attrs.requiredIndicator,
+      rowsAttr = attrs.rows,
+      tabindex = attrs.tabindex,
+      typeAttr = attrs.type,
+      className = attrs.className,
+      defaultValue = attrs.defaultValue,
+      dense = attrs.dense,
+      floatingLabel = attrs.floatingLabel,
+      focusHelp = attrs.focusHelp,
+      fullWidth = attrs.fullWidth,
+      hideValidation = attrs.hideValidation,
+      onChange = attrs.onChange,
+      style = attrs.style,
+      tone = attrs.tone,
+      valid = attrs.valid,
+      validate = attrs.validate,
+      validateAtStart = attrs.validateAtStart,
+      value = attrs.value,
+      rest = _objectWithoutProperties(attrs, [k.autofocus, k.readonly, "counter", "disabled", "error", "events", "help", "label", "maxlength", "minlength", "multiLine", "name", "optionalIndicator", "required", "requiredIndicator", "rows", "tabindex", "type", "className", "defaultValue", "dense", "floatingLabel", "focusHelp", "fullWidth", "hideValidation", "onChange", "style", "tone", "valid", "validate", "validateAtStart", "value"]);
+
   var inputEl = state.inputEl();
-  var error = attrs.error || state.error();
+  var error = errorAttr || state.error();
   var isInvalid = state.isInvalid();
-  var inputType = attrs.multiLine ? "textarea" : "input";
-  var type = attrs.multiLine ? null : !attrs.type || attrs.type === "submit" || attrs.type === "search" ? "text" : attrs.type;
+  var inputType = multiLine ? "textarea" : "input";
+  var type = multiLine ? null : !typeAttr || typeAttr === "submit" || typeAttr === "search" ? "text" : typeAttr;
   var showError = isInvalid && error !== undefined;
-
-  var inactive = attrs.disabled || attrs[k.readonly];
-
-  var requiredIndicator = attrs.required && attrs.requiredIndicator !== "" ? h("span", {
+  var inactive = disabled || readonly;
+  var rows = multiLine ? rowsAttr : null;
+  var requiredIndicator = required && requiredIndicatorAttr !== "" ? h("span", {
     key: "required",
     className: classes.requiredIndicator
-  }, attrs.requiredIndicator || "*") : null;
-  var optionalIndicator = !attrs.required && attrs.optionalIndicator ? h("span", {
+  }, requiredIndicatorAttr || "*") : null;
+  var optionalIndicator = !required && optionalIndicatorAttr ? h("span", {
     key: "optional",
     className: classes.optionalIndicator
-  }, attrs.optionalIndicator) : null;
-  var label = attrs.label ? [attrs.label, requiredIndicator, optionalIndicator] : null;
+  }, optionalIndicatorAttr) : null;
+  var label = labelAttr ? [labelAttr, requiredIndicator, optionalIndicator] : null;
 
   return [h("div", {
     className: classes.inputArea,
@@ -270,8 +305,8 @@ var createContent = function createContent(vnode, _ref4) {
   }, label) : null, h(inputType, _extends({}, {
     key: "input",
     className: classes.input,
-    disabled: attrs.disabled
-  }, type ? { type: type } : null, attrs.name ? { name: attrs.name } : null, !ignoreEvent(attrs, k.onclick) ? _defineProperty({}, k.onclick, function () {
+    disabled: disabled
+  }, type ? { type: type } : null, name ? { name: name } : null, !ignoreEvent(attrs, k.onclick) ? _defineProperty({}, k.onclick, function () {
     if (inactive) {
       return;
     }
@@ -307,17 +342,17 @@ var createContent = function createContent(vnode, _ref4) {
     } else if (e.key === "Escape" || e.key === "Esc") {
       state.setInputState({ vnode: vnode, focus: false });
     }
-  }) : null, attrs.events ? attrs.events : null, // NOTE: may overwrite oninput
-  attrs.required !== undefined && !!attrs.required ? { required: true } : null, attrs[k.readonly] !== undefined && !!attrs[k.readonly] ? _defineProperty({}, k.readonly, true) : null, attrs.pattern !== undefined ? { pattern: attrs.pattern } : null, attrs[k.maxlength] !== undefined ? _defineProperty({}, k.maxlength, attrs[k.maxlength]) : null, attrs[k.minlength] !== undefined ? _defineProperty({}, k.minlength, attrs[k.minlength]) : null, attrs.max !== undefined ? { max: attrs.max } : null, attrs.min !== undefined ? { min: attrs.min } : null, attrs[k.autofocus] !== undefined ? _defineProperty({}, k.autofocus, attrs[k.autofocus]) : null, attrs[k.tabindex] !== undefined ? _defineProperty({}, k.tabindex, attrs[k.tabindex]) : null, attrs.rows !== undefined ? { rows: attrs.rows } : null))]), attrs.counter ? h("div", {
+  }) : null, events ? attrs.events : null, // NOTE: may overwrite oninput
+  autofocus !== undefined ? _defineProperty({}, k.autofocus, autofocus) : null, maxlength !== undefined ? _defineProperty({}, k.maxlength, maxlength) : null, minlength !== undefined ? _defineProperty({}, k.minlength, minlength) : null, readonly !== undefined ? _defineProperty({}, k.readonly, true) : null, rows !== undefined ? { rows: rows } : null, tabindex !== undefined ? _defineProperty({}, k.tabindex, tabindex) : null, _extends({}, rest)))]), counter ? h("div", {
     key: "counter",
     className: classes.counter
-  }, (inputEl && inputEl.value.length || 0) + " / " + attrs.counter) : null, attrs.help && !showError ? h("div", {
+  }, (inputEl && inputEl.value.length || 0) + " / " + counter) : null, help && !showError ? h("div", {
     key: "help",
     className: [classes.help, attrs.focusHelp ? classes.focusHelp : null].join(" ")
-  }, attrs.help) : null, showError ? h("div", {
+  }, help) : null, showError ? h("div", {
     key: "error",
     className: classes.error
-  }, error) : state.showErrorPlaceholder && !attrs.help ? h("div", {
+  }, error) : state.showErrorPlaceholder && !help ? h("div", {
     key: "error-placeholder",
     className: classes.errorPlaceholder
   }) : null];
